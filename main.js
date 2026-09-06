@@ -1685,7 +1685,7 @@ function newlevel(level)
     // Write level description
     rainbowwrite(90, 70, "LEVEL "+(gs.level+1).toString(), 30, 100);
     rainbowwrite((XMAX/2)-((levels[gs.level].desc.length/2)*17), 140, levels[gs.level].desc, 30, 100);
-  }).add(2*1000, function()
+  }).add(1.5*1000, function()
   {
     gs.quit=false; // Prevent actioning Escape press between levels
 
@@ -1738,6 +1738,13 @@ function drawmenu()
 
     // Add a note of where the button is
     gs.buttons[level]={x:lx, y:ly, w:lw, h:lh};
+
+    // Add title
+    gs.ctx.font='bold 18px sans-serif';
+    gs.ctx.lineJoin='round'; // Smooth corners
+
+    gs.ctx.fillStyle='white';
+    gs.ctx.fillText('Level '+(level+1), lx+(lw/4), ly+lh-(lh/4));
 
     lx+=(lw+padding);
     if (level%2==1)
@@ -1814,7 +1821,8 @@ function endgame(percent)
 
     rainbowwrite(30, 40, "CONGRATULATIONS", 25, percent);
     rainbowwrite(30, 70, "YOUR UNICORN GOT", 25, percent);
-    rainbowwrite(30, 100, "ALL THE RAINBOWS", 25, percent);
+    rainbowwrite(30, 100, "ALL THE COINS TO", 25, percent);
+    rainbowwrite(30, 130, "THE RAINBOWS", 25, percent);
 
     rainbowwrite(30, 160, "YOU SCORED "+gs.score.toString(), 25, percent);
   }
