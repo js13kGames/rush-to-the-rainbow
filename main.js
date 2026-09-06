@@ -835,7 +835,7 @@ function destroyedcheck()
 
   while (i--)
   {
-    gs.destroyed[i].y+=2;
+    gs.destroyed[i].y+=3;
 
     if (gs.destroyed[i].y>(gs.height*TILEHEIGHT))
       gs.destroyed.splice(i, 1);
@@ -1373,6 +1373,31 @@ function scrolltoplayer(dampened)
   }
 }
 
+function randomdestruction()
+{
+  var n=Math.floor(rng()*gs.tiles.length);
+  var looped=false;
+
+  while (gs.tiles[n]==null)
+  {
+    n++;
+
+    if (n>=gs.tiles.length)
+    {
+      if (!looped)
+      {
+        looped=true;
+        n=0;
+      }
+      else
+        return; // Nothing to destroy
+    }
+  }
+
+  // Actually destroy this tile
+  destroytile(n, Math.floor(n%gs.width), Math.floor(n/gs.width));
+}
+
 // Redraw game frame
 function redraw()
 {
@@ -1384,7 +1409,11 @@ function redraw()
 
   // Clear the canvas
   if ((gs.stormtimer==0) && (rng()<0.005))
+  {
     gs.ctx.fillStyle='rgb(253, 224, 71)'; // Lightning
+
+    randomdestruction();
+  }
   else
     gs.ctx.fillStyle='rgb('+(BGCOLOUR.r*stormoffset)+','+(BGCOLOUR.g*stormoffset)+','+(BGCOLOUR.b*stormoffset)+')';
   gs.ctx.fillRect(0, 0, gs.canvas.width, gs.canvas.height);
@@ -1496,6 +1525,7 @@ function loadlevel(level)
             gs.flip=false;
             gs.particles=[];
             gs.rain=[];
+            gs.destroyed=[];
             break;
 
           case TILEBOB:
