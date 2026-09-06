@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.12.2-2-geb83ddb9" orientation="orthogonal" renderorder="left-down" width="30" height="20" tilewidth="18" tileheight="18" infinite="0" nextlayerid="3" nextobjectid="1">
  <properties>
-  <property name="desc" value="Red Level"/>
+  <property name="desc" value="Orange Level"/>
   <property name="storm" value="120"/>
  </properties>
  <tileset firstgid="1" source="tilemap.tsx"/>
