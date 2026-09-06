@@ -172,3 +172,5 @@ Created some game screenshots for the submission page, using Grok.
 Updated the submission page with screenshots after resizing, reducing colour depth to 256 and passing through TinyPNG.
 
 Had to rework the description text for the game submission becuase what I had was over the 2048 byte limit - yikes. This involved removing section headings, minimising whitespace and reducing image URLs.
+
+Allow tiles to be destroyed, they jump up a little and then fall down off the level. This happens to coin and breaker blocks, plus any that will randomly be destroyed when the storm comes
