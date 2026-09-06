@@ -162,3 +162,13 @@ Made some notes of what I still want to do before submitting the game.
 Spent some time updating the description text for the game which will show on the game select page of JS13k website. Simplifying text, adding background and goal, emoji, tile descriptions e.t.c.
 
 Added functionality so that when Escape is pressed it exits the game and goes back to the menu.
+
+Thought I'd better test the gamepad functionality works with an actual gamepad, and was happy to see it all worked as expected without any changes.
+
+Created some game screenshots for the submission page, using Grok.
+
+6th September
+-------------
+Updated the submission page with screenshots after resizing, reducing colour depth to 256 and passing through TinyPNG.
+
+Had to rework the description text for the game submission becuase what I had was over the 2048 byte limit - yikes. This involved removing section headings, minimising whitespace and reducing image URLs.
