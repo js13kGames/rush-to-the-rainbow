@@ -148,6 +148,7 @@ var gs={
 
   // Tiles
   tiles:[], // copy of current level (to allow destruction)
+  destroyed:[], // the tiles which are being destroyed
 
   // Menu button locations
   buttons:[],
@@ -557,6 +558,14 @@ function jumpcheck()
   }
 }
 
+// Destroy tile
+function destroytile(n, x, y)
+{
+  gs.destroyed.push({tile:gs.tiles[n], x:x*TILEWIDTH, y:(y-1)*TILEHEIGHT});
+
+  gs.tiles[n]=null;
+}
+
 // Move player by appropriate amount, up to a collision
 function collisioncheck()
 {
@@ -603,7 +612,7 @@ function collisioncheck()
       if ((headedblock==TILECOINBLOCK) || (headedblock==TILEBREAKERBLOCK))
       {
         // Remove tile
-        gs.tiles[(gs.lastcollision.y*gs.width)+gs.lastcollision.x]=null;
+        destroytile((gs.lastcollision.y*gs.width)+gs.lastcollision.x, gs.lastcollision.x, gs.lastcollision.y);
 
         // Move back to where we were
         gs.x=gs.px;
@@ -820,6 +829,19 @@ function particlecheck()
   }
 }
 
+function destroyedcheck()
+{
+  var i=gs.destroyed.length;
+
+  while (i--)
+  {
+    gs.destroyed[i].y+=2;
+
+    if (gs.destroyed[i].y>(gs.height*TILEHEIGHT))
+      gs.destroyed.splice(i, 1);
+  }
+}
+
 // Update player movements
 function updatemovements()
 {
@@ -840,6 +862,9 @@ function updatemovements()
 
   // Check for particle usage
   particlecheck();
+
+  // Check for destroyed tiles
+  destroyedcheck();
 
   // When a movement key is pressed, adjust players speed and direction
   if ((gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE))
@@ -1274,6 +1299,13 @@ function drawparticles()
     drawrain(gs.rain[i]);
 }
 
+// Draw tiles as they are being destroyed
+function drawdestroyed()
+{
+  for (var i=0; i<gs.destroyed.length; i++)
+    drawtile(gs.destroyed[i].tile-1, gs.destroyed[i].x, gs.destroyed[i].y);
+}
+
 // Determine distance (Hypotenuse) between two lengths in 2D space (using Pythagoras)
 function calcHypotenuse(a, b)
 {
@@ -1285,10 +1317,9 @@ function islevelcompleted()
 {
   // This is defined as ..
   //   no coins
-  //   no gems
   //   standing on rainbow
 
-  return ((countchars([TILECOIN, TILECOIN2, TILECOINBLOCK, TILEGEM])==0) && (gs.overtherainbow));
+  return ((countchars([TILECOIN, TILECOIN2, TILECOINBLOCK])==0) && (gs.overtherainbow));
 }
 
 // Scroll level to player
@@ -1366,6 +1397,9 @@ function redraw()
 
   // Draw the particles
   drawparticles();
+
+  // Draw the destroyed tiles
+  drawdestroyed();
 
   // Draw the rainbow trail
   if ((gs.hs!=0) || (gs.vs!=0))
