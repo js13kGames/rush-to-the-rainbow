@@ -1623,6 +1623,8 @@ function newlevel(level)
     rainbowwrite((XMAX/2)-((levels[gs.level].desc.length/2)*17), 140, levels[gs.level].desc, 30, 100);
   }).add(2*1000, function()
   {
+    gs.quit=false; // Prevent actioning Escape press between levels
+
     gs.state=STATEPLAYING;
     loadlevel(gs.level);
 
