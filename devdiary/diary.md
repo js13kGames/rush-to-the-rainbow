@@ -178,3 +178,7 @@ Allow tiles to be destroyed, they jump up a little and then fall down off the le
 Speed up tweem level screen a little it felt a little slow.
 
 Added title text to level select menu and updated game complete text to be more accurate.
+
+7th September
+-------------
+Started to flesh out some level ideas, a horizontal one and a vertical one. Trying to very roughly theme each level after a colour of the rainbow. Once I've got the mechanics of each level sorted I'll need to adjust the storm timers appropriately.
