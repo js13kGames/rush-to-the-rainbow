@@ -182,3 +182,5 @@ Added title text to level select menu and updated game complete text to be more 
 7th September
 -------------
 Started to flesh out some level ideas, a horizontal one and a vertical one. Trying to very roughly theme each level after a colour of the rainbow. Once I've got the mechanics of each level sorted I'll need to adjust the storm timers appropriately.
+
+Added a level which is split into 4 zones - to roughly match the seasons.
