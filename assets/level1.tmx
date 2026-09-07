@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="30" height="10" tilewidth="18" tileheight="18" nextobjectid="1">
+<map version="1.10" tiledversion="1.12.2-2-geb83ddb9" orientation="orthogonal" renderorder="left-down" width="30" height="10" tilewidth="18" tileheight="18" infinite="0" nextlayerid="3" nextobjectid="1">
  <properties>
   <property name="desc" value="Red Level"/>
   <property name="storm" value="120"/>
  </properties>
  <tileset firstgid="1" source="tilemap.tsx"/>
- <layer name="chars" width="30" height="10">
+ <layer id="1" name="chars" width="30" height="10">
   <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,105,106,107,0,0,0,0,70,0,0,0,0,0,29,33,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,105,106,107,0,0,0,29,70,0,0,0,0,0,0,33,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,90,0,31,30,31,30,0,53,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,30,31,30,31,30,0,0,0,90,52,30,0,0,31,128,73,6,
 0,0,0,0,0,0,0,0,0,15,13,16,0,0,0,0,0,0,0,0,0,110,72,0,0,0,0,0,0,0,
@@ -19,7 +19,7 @@
 0,0,0,34,34,0,0,0,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54
 </data>
  </layer>
- <layer name="tiles" width="30" height="10">
+ <layer id="2" name="tiles" width="30" height="10">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="18" height="30" tilewidth="18" tileheight="18" nextobjectid="1">
+<map version="1.10" tiledversion="1.12.2-2-geb83ddb9" orientation="orthogonal" renderorder="left-down" width="18" height="30" tilewidth="18" tileheight="18" infinite="0" nextlayerid="3" nextobjectid="1">
  <properties>
   <property name="desc" value="Orange Level"/>
   <property name="storm" value="120"/>
  </properties>
  <tileset firstgid="1" source="tilemap.tsx"/>
- <layer name="chars" width="18" height="30">
+ <layer id="1" name="chars" width="18" height="30">
   <data encoding="csv">
 0,0,30,0,31,30,31,30,0,0,0,52,0,0,31,30,31,30,
 29,0,31,0,30,31,30,31,0,0,0,72,6,0,30,31,30,31,
@@ -39,7 +39,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="tiles" width="18" height="30">
+ <layer id="2" name="tiles" width="18" height="30">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
