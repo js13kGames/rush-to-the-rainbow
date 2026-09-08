@@ -470,6 +470,9 @@ function collide(px, py, pw, ph)
   if (px<=(0-(SPRITEWIDTH/5))) return true;
   if ((px+(SPRITEWIDTH/5))>=(gs.width*TILEWIDTH)) return true;
 
+  // Prevent jumping off the top of the map
+  if ((py+(SPRITEWIDTH/5))<0) return true;
+
   // Look through all the tiles for a collision
   for (var y=0; y<gs.height; y++)
   {
@@ -1865,7 +1868,7 @@ function menu(percent)
 
     gs.lives=MAXLIVES;
 
-gs.level=1; // TODO remove
+gs.level=4; // TODO remove
     newlevel(gs.level);
   }
   else
