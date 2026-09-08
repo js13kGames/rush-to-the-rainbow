@@ -128,6 +128,8 @@ var gs={
 
   // Level attributes
   level:0, // Level number (0 based)
+  selected:0, // Currently selected level on menu
+  unlocked:0, // Next level to play honouring localStorage records
   width:0, // Width of level in tiles
   height:0, // Height of level in tiles
   xoffset:0, // current view offset from left (horizontal scroll)
@@ -1730,7 +1732,11 @@ function drawmenu()
     gs.ctx.roundRect(lx, ly, lw, lh, [lw/4, lh/4]);
     gs.ctx.fill();
 
-    gs.ctx.strokeStyle='rgb('+(RAINBOWCOLS[level].r*shade)+','+(RAINBOWCOLS[level].g*shade)+','+(RAINBOWCOLS[level].b*shade)+')';
+    if (gs.selected==level)
+      gs.ctx.strokeStyle='white';
+    else
+      gs.ctx.strokeStyle='rgb('+(RAINBOWCOLS[level].r*shade)+','+(RAINBOWCOLS[level].g*shade)+','+(RAINBOWCOLS[level].b*shade)+')';
+
     gs.ctx.lineWidth=3;
     gs.ctx.beginPath();
     gs.ctx.roundRect(lx, ly, lw, lh, [lw/4, lh/4]);
@@ -1743,7 +1749,12 @@ function drawmenu()
     gs.ctx.font='bold 18px sans-serif';
     gs.ctx.lineJoin='round'; // Smooth corners
 
-    gs.ctx.fillStyle='white';
+    // Highlight which levels are playable
+    if (level>gs.unlocked)
+      gs.ctx.fillStyle='gray';
+    else
+      gs.ctx.fillStyle='white';
+
     gs.ctx.fillText('Level '+(level+1), lx+(lw/4), ly+lh-(lh/4));
 
     lx+=(lw+padding);
@@ -1854,6 +1865,7 @@ function menu(percent)
 
     gs.lives=MAXLIVES;
 
+gs.level=1; // TODO remove
     newlevel(gs.level);
   }
   else
@@ -1944,10 +1956,14 @@ chipt.start(); // TODO
       gs.savedata=JSON.parse(savedata);
 
       // Continue with next level, retaining accumulated score
+      gs.unlocked=gs.savedata.nextlevel;
+      gs.selected=gs.savedata.nextlevel;
+
       gs.level=gs.savedata.nextlevel;
       gs.score=gs.savedata.score;
 
       // If the whole game has been completed go back to the start
+      //   otherwise it'll keep defaulting to playing the last level
       if ((gs.level)>=levels.length)
       {
         gs.level=0;
