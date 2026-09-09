@@ -978,11 +978,14 @@ function updateplayerchar()
           break;
 
         case TILEHEART:
-          // Remove from map
-          gs.chars[id].del=true;
+          if (gs.lives!=MAXLIVES) // Don't collect if already full
+          {
+            // Remove from map
+            gs.chars[id].del=true;
 
-          gs.lives++;
-          if (gs.lives>MAXLIVES) gs.lives=MAXLIVES;
+            gs.lives++;
+            if (gs.lives>MAXLIVES) gs.lives=MAXLIVES;
+          }
           break;
 
         case TILECOIN:
@@ -1406,7 +1409,7 @@ function randomdestruction()
 // Redraw game frame
 function redraw()
 {
-  var stormoffset=(gs.stormtimer/(2*60*TARGETFPS));
+  var stormoffset=(gs.stormtimer/(parseInt(levels[gs.level].storm, 10)*TARGETFPS));
   if (stormoffset<0.5) stormoffset=0.5;
 
   // Scroll to keep player in view
@@ -1689,7 +1692,6 @@ function newlevel(level)
   
     // Write level description
     rainbowwrite(90, 70, "LEVEL "+(gs.level+1).toString(), 30, 100);
-    rainbowwrite((XMAX/2)-((levels[gs.level].desc.length/2)*17), 140, levels[gs.level].desc, 30, 100);
   }).add(1.5*1000, function()
   {
     gs.quit=false; // Prevent actioning Escape press between levels
@@ -1868,7 +1870,7 @@ function menu(percent)
 
     gs.lives=MAXLIVES;
 
-gs.level=4; // TODO remove
+gs.level=6; // TODO remove
     newlevel(gs.level);
   }
   else

@@ -15,7 +15,6 @@ $xml=new SimpleXMLElement(file_get_contents($argv[1]));
 $width=intval((string)$xml->attributes()['width']);
 $height=intval((string)$xml->attributes()['height']);
 
-$description="";
 $storm=120;
 
 // Process level properties
@@ -25,10 +24,6 @@ if (is_array($xml->properties->property) || is_object($xml->properties->property
   {
     switch ($prop->attributes()->name)
     {
-      case "desc":
-        $description=(string)$prop->attributes()->value;
-        break;
-
       case "storm":
         $storm=intval((string)$prop->attributes()->value);
         break;
@@ -71,7 +66,6 @@ $output=array(
   "width"=>$width,
   "height"=>$height,
   "storm"=>$storm,
-  "desc"=>$description,
   "level"=>$leveldata
 );
 

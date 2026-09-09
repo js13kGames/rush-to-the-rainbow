@@ -53,7 +53,7 @@ then
       echo -n "," >> "${leveljs}"
     fi
 
-    php compactlevel.php "${file}" | sed 's/,0,/,,/g' | sed 's/,0,/,,/g' | sed 's/\[0,/\[,/g' | sed 's/,0\]/,\]/g' | sed 's/"width"/width/g' | sed 's/"height"/height/g' | sed 's/"desc"/desc/g' | sed 's/"storm"/storm/g' | sed 's/"level"/level/g' >> "${leveljs}"
+    php compactlevel.php "${file}" | sed 's/,0,/,,/g' | sed 's/,0,/,,/g' | sed 's/\[0,/\[,/g' | sed 's/,0\]/,\]/g' | sed 's/"width"/width/g' | sed 's/"height"/height/g' | sed 's/"storm"/storm/g' | sed 's/"level"/level/g' >> "${leveljs}"
 
     first="false"
   done
