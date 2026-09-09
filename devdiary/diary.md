@@ -188,3 +188,7 @@ Added a level which is split into 4 zones - to roughly match the seasons.
 8th September
 -------------
 Highlight on the menu which is the currently selected level and which are unlocked levels (ones that have already been completed).
+
+Some of the levels are made too easy because you can jump off the top of the level and across to otherwise blocked sections of the level. So I've blocked that from happening.
+
+Worked on blue level full of pipes and water
