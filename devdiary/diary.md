@@ -192,3 +192,9 @@ Highlight on the menu which is the currently selected level and which are unlock
 Some of the levels are made too easy because you can jump off the top of the level and across to otherwise blocked sections of the level. So I've blocked that from happening.
 
 Worked on blue level full of pipes and water
+
+9th September
+-------------
+Working on some more level updates, starting to come closer to the 13k limit!
+
+Looking at some ways to reduce size
