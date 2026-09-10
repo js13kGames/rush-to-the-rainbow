@@ -197,4 +197,4 @@ Worked on blue level full of pipes and water
 -------------
 Working on some more level updates, starting to come closer to the 13k limit!
 
-Looking at some ways to reduce size
+Looking at some ways to reduce size including cropping levels, streamlining CSS, etc

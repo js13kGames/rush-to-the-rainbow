@@ -166,5 +166,5 @@ if [ ${bytesleft} -ge 0 ]
 then
   echo "YAY ${percent}% used - it fits with ${bytesleft} bytes spare"
 else
-  echo "OH NO ${percent}% used - it's gone ovey by "$((0-${bytesleft}))" bytes"
+  echo "OH NO ${percent}% used - it's gone over by "$((0-${bytesleft}))" bytes"
 fi
