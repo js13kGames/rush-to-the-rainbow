@@ -198,3 +198,11 @@ Worked on blue level full of pipes and water
 Working on some more level updates, starting to come closer to the 13k limit!
 
 Looking at some ways to reduce size including cropping levels, streamlining CSS, etc
+
+10th September
+--------------
+More golfing on the HTML and CSS, removing some properties and attributes which are not required or are now defaulted to what I was setting them to.
+
+Removed polyfill for window.event which was used for MSIE compatibility.
+
+Removed debug feature, including FPS calculations.
