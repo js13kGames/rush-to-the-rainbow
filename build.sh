@@ -120,7 +120,7 @@ do
 done
 
 # Add the index header
-echo -n '<!DOCTYPE html><html><head><meta charset="utf-8"/><meta http-equiv="Content-Type" content="text/html;charset=utf-8"/><title>JS13k 2026</title><style>' > "${indexcat}"
+echo -n '<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>JS13k 2026</title><style>' > "${indexcat}"
 
 # Inject the concatenated and minified CSS files
 echo "Minifying CSS"
@@ -130,7 +130,7 @@ do
 done
 
 # Add on the rest of the index file
-echo -n '</style><script type="text/javascript">' >> "${indexcat}"
+echo -n '</style><script>' >> "${indexcat}"
 
 # Inject the closure-ised and minified JS
 echo "Using closure to minify JS"
