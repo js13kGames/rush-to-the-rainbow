@@ -81,9 +81,6 @@ var gs={
   acc:0, // accumulated time since last frame
   lasttime:0, // time of last frame
 
-  fps:0, // current FPS
-  frametimes:[], // array of frame times
-
   // physics in pixels per frame @ 60fps
   gravity:0.25,
   terminalvelocity:10,
