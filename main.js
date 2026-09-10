@@ -1640,6 +1640,7 @@ function rafcallback(timestamp)
   {
     gs.quit=false;
 
+    gs.flip=false; // Make sure unicorn always faces towards rainbow
     gs.state=STATEMENU;
     gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
     setTimeout(resettomenu, 300);
@@ -1841,6 +1842,15 @@ function menu(percent)
 
   drawmenu(); // TODO remove
 
+  // Draw running unicorn
+  gs.ctx.fillStyle='rgb('+BGCOLOUR.r+','+BGCOLOUR.g+','+BGCOLOUR.b+')';
+  gs.ctx.fillRect(30, 125, SPRITEWIDTH, SPRITEHEIGHT);
+  drawsprite(30, 125, (Math.floor(percent)%6)+1);
+
+  // Draw rainbow
+  drawtile(TILERAINBOW, 260, 130);
+  drawtile(TILERAINBOW2, 260+TILEWIDTH, 130);
+
   // Check if done or control key/gamepad pressed
   if (percent>=98)
   {
@@ -1854,7 +1864,7 @@ function menu(percent)
 
     gs.lives=MAXLIVES;
 
-gs.level=6; // TODO remove
+gs.level=0; // TODO remove
     newlevel(gs.level);
   }
   else
