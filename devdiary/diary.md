@@ -208,3 +208,5 @@ More golfing on the HTML and CSS, removing some properties and attributes which 
 Removed polyfill for [window.event](https://developer.mozilla.org/en-US/docs/Web/API/Window/event) which was used for MSIE compatibility.
 
 Removed debug feature, including FPS calculations.
+
+Added rainbow and unicorn to level select screen.
