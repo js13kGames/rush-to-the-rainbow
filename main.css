@@ -2,17 +2,14 @@
 {
   margin:0px;
   padding:0px;
+  overflow:hidden;
 
-  user-select:none; /* Chrome and Opera */
-  -webkit-user-select:none; /* Safari */
-  -moz-user-select:none; /* Firefox */
-
+  user-select:none;
   touch-action:none; /* disable panning/zooming gestures */
 }
 
 body
 {
-  overflow:hidden;
   background:#000;
 }
 
@@ -23,7 +20,6 @@ body
   top:0px;
   width:100%;
   height:100%;
-  overflow:hidden;
 }
 
 canvas
