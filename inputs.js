@@ -80,13 +80,6 @@ function updatekeystate(e, dir)
       e.preventDefault();
       break;
 
-    case key_key+"I": // I (for info/debug)
-      if (dir==1)
-        gs.debug=(!gs.debug);
-
-      e.preventDefault();
-      break;
-
     case "Escape": // escape
       if ((!gs.quit) && (dir==1))
         gs.quit=true;

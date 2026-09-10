@@ -169,9 +169,6 @@ var gs={
   // Timeline for animation
   timeline:new timelineobj(), // timeline for general animation
 
-  // Debug flag
-  debug:false,
-
   // Quit flag to go back to menu
   quit:false,
 
@@ -1562,16 +1559,6 @@ function loadlevel(level)
 // Request animation frame callback
 function rafcallback(timestamp)
 {
-  if (gs.debug)
-  {
-    // Calculate FPS
-    while ((gs.frametimes.length>0) && (gs.frametimes[0]<=(timestamp-1000)))
-      gs.frametimes.shift(); // Remove all entries older than a second
-
-    gs.frametimes.push(timestamp); // Add current time
-    gs.fps=gs.frametimes.length; // FPS = length of times in array
-  }
-
   // First time round, just save epoch
   if (gs.lasttime>0)
   {
@@ -1906,21 +1893,18 @@ function init()
   // Initialise stuff
   document.onkeydown=function(e)
   {
-    e = e || window.event;
     updatekeystate(e, 1);
 chipt.start(); // TODO
   };
 
   document.onkeyup=function(e)
   {
-    e = e || window.event;
     updatekeystate(e, 0);
   };
 
   // Stop things from being dragged around
   window.ondragstart=function(e)
   {
-    e = e || window.event;
     e.preventDefault();
   };
 
