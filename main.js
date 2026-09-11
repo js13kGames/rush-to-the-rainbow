@@ -163,9 +163,6 @@ var gs={
   // Game state
   state:STATEMENU, // state machine
 
-  // Timeline for animation
-  timeline:new timelineobj(), // timeline for general animation
-
   // Quit flag to go back to menu
   quit:false,
 
@@ -353,7 +350,7 @@ function createsprites()
 
       // Step into menu when all done
       if (gs.spritesflip.length==poses.length)
-        window.requestAnimationFrame(menurafcallback);
+        resettomenu();
     };
     sprite.src=getImageURL(SpriteData, SPRITEWIDTH, SPRITEHEIGHT, false);
   }
@@ -1555,6 +1552,105 @@ function loadlevel(level)
   scrolltoplayer(false);
 }
 
+// Info screens
+function inforafcallback(timestamp)
+{
+  // Gamepad support
+  try
+  {
+    if (!!(navigator.getGamepads))
+      gamepadscan();
+  }
+  catch(e){}
+
+  // Clear screen
+  gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
+
+  switch (gs.state)
+  {
+    case STATENEWLEVEL:
+      // Write level description
+      rainbowwrite(90, 70, "LEVEL "+(gs.level+1).toString(), 30, 100);
+
+      if ((gs.frame==0) || (gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE))
+      {
+        gs.quit=false; // Prevent actioning Escape press between levels
+    
+        gs.state=STATEPLAYING;
+        loadlevel(gs.level);
+    
+        // Start play loop
+        window.requestAnimationFrame(rafcallback);
+      }
+      break;
+
+    case STATECOMPLETE:
+      rainbowwrite(30, 40, "CONGRATULATIONS", 25, 100);
+      rainbowwrite(30, 70, "YOUR UNICORN GOT", 25, 100);
+      rainbowwrite(30, 100, "ALL THE COINS TO", 25, 100);
+      rainbowwrite(30, 130, "THE RAINBOWS", 25, 100);
+
+      rainbowwrite(30, 160, "YOU SCORED "+gs.score.toString(), 25, 100);
+
+      if ((gs.frame==0) || (gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE))
+      {
+        // End of game - back to the menu
+        gs.state=STATEMENU;
+        setTimeout(resettomenu, 100);
+      }
+      break;
+
+    case STATEFAIL:
+      rainbowwrite(30, 40, "UNLUCKY", 40, 100);
+      rainbowwrite(30, 70, "YOUR UNICORN", 30, 100);
+      rainbowwrite(15, 100, "FAILED TO REACH", 30, 100);
+      rainbowwrite(30, 130, "THE RAINBOW", 30, 100);
+
+      rainbowwrite(30, 160, "YOU SCORED "+gs.score.toString(), 20, 100);
+
+      if ((gs.frame==0) || (gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE))
+      {
+        gs.level=0; // Player failed - back to the start
+
+        gs.state=STATEMENU;
+        setTimeout(resettomenu, 100);
+      }
+      break;
+
+    default:
+      break;
+  }
+
+  // Reduce held inputs causing issues
+  clearinputstate();
+
+  // Count down to a timeout
+  if (gs.frame>0)
+    gs.frame--;
+
+  // Go round again
+  if ((gs.state!=STATEMENU) && (gs.state!=STATEPLAYING))
+    window.requestAnimationFrame(inforafcallback);
+}
+
+// Switch to information screen
+function infogame(timeout)
+{
+  // Set a timeout for when to stop showing info
+  gs.frame=timeout;
+
+  // Reduce held inputs causing issues
+  clearinputstate();
+
+  // Enter info loop
+  window.requestAnimationFrame(inforafcallback);
+}
+
+function infogame10()
+{
+  infogame(10*TARGETFPS);
+}
+
 // Request animation frame callback
 function rafcallback(timestamp)
 {
@@ -1587,17 +1683,14 @@ function rafcallback(timestamp)
     redraw();
 
     // Check for level failed
-    if ((gs.state==STATEPLAYING) && (gs.lives==0))
+    if ((gs.state==STATEPLAYING) && (gs.lives<=0))
     {
-      gs.xoffset=0;
-      gs.yoffset=0;
-
       gs.state=STATEFAIL;
 
       // Reduce issues when inputs held
       clearinputstate();
 
-      gs.timeline.reset().add(10*1000, undefined).addcallback(failgame).begin(0);
+      setTimeout(infogame10, 100);
     }
 
     // Check for level completed
@@ -1607,14 +1700,16 @@ function rafcallback(timestamp)
       gs.overtherainbow=false;
 
       // Add to score based on how much health is left
-      gs.score+=(10*gs.lives);
+      gs.score+=Math.floor(10*gs.lives);
 
+      // Update or Save the game state
       try
       {
         window.localStorage.setItem(SAVEDATA, JSON.stringify({nextlevel:gs.level+1, score:gs.score}));
       }
       catch (e){}
 
+      // Check for whole game being completed
       if ((gs.level+1)==levels.length)
       {
         // End of game
@@ -1623,10 +1718,10 @@ function rafcallback(timestamp)
         // Reduce issues when inputs held
         clearinputstate();
 
-        gs.timeline.reset().add(10*1000, undefined).addcallback(endgame).begin(0);
+        setTimeout(infogame10, 100);
       }
       else
-        newlevel(gs.level+1);
+        newlevel(gs.level+1); // TODO
     }
 
     // If the update took us out of play state then stop now
@@ -1640,11 +1735,14 @@ function rafcallback(timestamp)
   // Check for quit to menu
   if (gs.quit)
   {
+    // Acknowledge quit flag
     gs.quit=false;
 
+    // Update vars for level select menu
     gs.selected=gs.level;
     gs.unlocked=gs.level;
 
+    // Switch to menu
     gs.state=STATEMENU;
     setTimeout(resettomenu, 100);
   }
@@ -1654,45 +1752,7 @@ function rafcallback(timestamp)
     window.requestAnimationFrame(rafcallback);
 }
 
-// New level screen
-function newlevel(level)
-{
-  if ((level<0) || (level>=levels.length))
-    return;
-
-  // Ensure timeline is stopped
-  gs.timeline.end().reset();
-  gs.timeline=new timelineobj();
-
-  gs.state=STATENEWLEVEL;
-
-  // Reduce held inputs causing issues
-  clearinputstate();
-
-  // Set up a timeline to display level details
-  gs.timeline.add(0, function()
-  {
-    // Advance to next level
-    gs.level=level;
-
-    // Clear canvas
-    gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
-  
-    // Write level description
-    rainbowwrite(90, 70, "LEVEL "+(gs.level+1).toString(), 30, 100);
-  }).add(1.5*1000, function()
-  {
-    gs.quit=false; // Prevent actioning Escape press between levels
-
-    gs.state=STATEPLAYING;
-    loadlevel(gs.level);
-
-    window.requestAnimationFrame(rafcallback);
-  });
-
-  gs.timeline.begin()
-}
-
+// Write text using the rainbow gradient
 function rainbowwrite(x, y, text, fontsize, percent)
 {
   gs.ctx.font='bold '+fontsize+'px sans-serif';
@@ -1702,6 +1762,7 @@ function rainbowwrite(x, y, text, fontsize, percent)
   gs.ctx.fillText(text, x, y+(Math.sin(percent)*3));
 }
 
+// Called every frame whilst in the menu
 function menurafcallback(timestamp)
 {
   // Gamepad support
@@ -1750,7 +1811,7 @@ function menurafcallback(timestamp)
   {
     gs.lives=MAXLIVES;
 
-    newlevel(gs.selected);
+    newlevel(gs.selected); // TODO
   }
 
   // Reduce held inputs causing issues
@@ -1761,6 +1822,7 @@ function menurafcallback(timestamp)
     window.requestAnimationFrame(menurafcallback);
 }
 
+// Enter into the level select menu loop
 function resettomenu()
 {
   gs.flip=false; // Make sure unicorn always faces towards rainbow
@@ -1823,72 +1885,16 @@ function drawmenu()
   }
 }
 
-// Fail game animation
-function failgame(percent)
+function newlevel(level)
 {
-  if (gs.state!=STATEFAIL)
+  // Only load up valid levels
+  if ((level<0) || (level>=levels.length))
     return;
 
-  // Gamepad support
-  try
-  {
-    if (!!(navigator.getGamepads))
-      gamepadscan();
-  }
-  catch(e){}
+  gs.state=STATENEWLEVEL;
+  gs.level=level;
 
-  // Check if done or control key/gamepad pressed
-  if ((percent>=98) || (((gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE)) && (percent>=20)))
-  {
-    gs.level=0; // Player failed - back to the start
-
-    gs.state=STATEMENU;
-    setTimeout(resettomenu, 100);
-  }
-  else
-  {
-    gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
-
-    rainbowwrite(30+((100-percent)/5), 40, "UNLUCKY", 40, percent);
-    rainbowwrite(30, 70, "YOUR UNICORN", 30, percent);
-    rainbowwrite(15, 100, "FAILED TO REACH", 30, percent);
-    rainbowwrite(30, 130, "THE RAINBOW", 30, percent);
-
-    rainbowwrite(30+((100-percent)/5), 160, "YOU SCORED "+gs.score.toString(), 20, percent);
-  }
-}
-
-// End game animation
-function endgame(percent)
-{
-  if (gs.state!=STATECOMPLETE)
-    return;
-
-  // Gamepad support
-  try
-  {
-    if (!!(navigator.getGamepads))
-      gamepadscan();
-  }
-  catch(e){}
-
-  // Check if done or control key/gamepad pressed
-  if ((percent>=98) || (((gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE)) && (percent>=20)))
-  {
-    gs.state=STATEMENU;
-    setTimeout(resettomenu, 100);
-  }
-  else
-  {
-    gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
-
-    rainbowwrite(30, 40, "CONGRATULATIONS", 25, percent);
-    rainbowwrite(30, 70, "YOUR UNICORN GOT", 25, percent);
-    rainbowwrite(30, 100, "ALL THE COINS TO", 25, percent);
-    rainbowwrite(30, 130, "THE RAINBOWS", 25, percent);
-
-    rainbowwrite(30, 160, "YOU SCORED "+gs.score.toString(), 25, percent);
-  }
+  infogame(1.5*TARGETFPS);
 }
 
 // Entry point
