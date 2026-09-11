@@ -210,3 +210,11 @@ Removed polyfill for [window.event](https://developer.mozilla.org/en-US/docs/Web
 Removed debug feature, including FPS calculations.
 
 Added rainbow and unicorn to level select screen.
+
+11th September
+--------------
+Remove timeline from level select menu as it wasn't really necessary. Instead use a new menu raf callback.
+
+Updated so that if you quit back to the main menu with Escape, it remembers how far you played up to and which levels have been unlocked. Otherwise this isn't checked properly again until localStorage is read when the page starts up from nothing or F5 is pressed.
+
+Put code in so that level select menu does start the one you've got highlighted, but you can't go passed ones you've not completed.

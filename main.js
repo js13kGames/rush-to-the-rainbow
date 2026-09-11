@@ -350,11 +350,13 @@ function createsprites()
 
       // Save flipped sprite
       gs.spritesflip.push(spriteflip);
+
+      // Step into menu when all done
+      if (gs.spritesflip.length==poses.length)
+        window.requestAnimationFrame(menurafcallback);
     };
     sprite.src=getImageURL(SpriteData, SPRITEWIDTH, SPRITEHEIGHT, false);
   }
-
-  gs.timeline.begin(0);
 }
 
 function drawlives()
@@ -1640,10 +1642,11 @@ function rafcallback(timestamp)
   {
     gs.quit=false;
 
-    gs.flip=false; // Make sure unicorn always faces towards rainbow
+    gs.selected=gs.level;
+    gs.unlocked=gs.level;
+
     gs.state=STATEMENU;
-    gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
-    setTimeout(resettomenu, 300);
+    setTimeout(resettomenu, 100);
   }
 
   // Request we are called on the next frame, but only if still playing
@@ -1699,9 +1702,70 @@ function rainbowwrite(x, y, text, fontsize, percent)
   gs.ctx.fillText(text, x, y+(Math.sin(percent)*3));
 }
 
+function menurafcallback(timestamp)
+{
+  // Gamepad support
+  try
+  {
+    if (!!(navigator.getGamepads))
+      gamepadscan();
+  }
+  catch(e){}
+
+  // Clear screen
+  gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
+
+  gs.ctx.fillStyle='rgb('+BGCOLOUR.r+','+BGCOLOUR.g+','+BGCOLOUR.b+')';
+  gs.ctx.fillRect(0, 0, gs.canvas.width, gs.canvas.height);
+
+  // Draw menu
+  drawmenu();
+
+  // Draw rainbow
+  drawtile(TILERAINBOW, 260, 130);
+  drawtile(TILERAINBOW2, 260+TILEWIDTH, 130);
+
+  // Draw running unicorn
+  gs.ctx.fillStyle='rgb('+BGCOLOUR.r+','+BGCOLOUR.g+','+BGCOLOUR.b+')';
+  gs.ctx.fillRect(30, 125, SPRITEWIDTH, SPRITEHEIGHT);
+  drawsprite(30, 125, (Math.floor(gs.frame/3)%6)+1);
+  gs.frame++;
+
+  rainbowwrite(25, 20, "RUSH TO THE RAINBOW", 20, 100);
+  rainbowwrite(22, 175, "WASD CURSORS OR GAMEPAD", 15, 100);
+
+  // Check for arrow navigation
+  if (ispressed(KEYLEFT))
+    gs.selected--;
+
+  if (ispressed(KEYRIGHT))
+    gs.selected++;
+
+  if (gs.selected<0) gs.selected=0;
+  if (gs.selected>gs.unlocked) gs.selected=gs.unlocked;
+  if (gs.selected>=levels.length) gs.selected=levels.length-1;
+
+  // Check for action (start level)
+  if (ispressed(KEYACTION))
+  {
+    gs.lives=MAXLIVES;
+
+    newlevel(gs.selected);
+  }
+
+  // Reduce held inputs causing issues
+  clearinputstate();
+
+  // If still in menu, go round again
+  if (gs.state==STATEMENU)
+    window.requestAnimationFrame(menurafcallback);
+}
+
 function resettomenu()
 {
-  gs.timeline.reset().add(10*1000, undefined).addcallback(menu).begin(0);
+  gs.flip=false; // Make sure unicorn always faces towards rainbow
+
+  window.requestAnimationFrame(menurafcallback);
 }
 
 // Present a level select screen
@@ -1779,8 +1843,7 @@ function failgame(percent)
     gs.level=0; // Player failed - back to the start
 
     gs.state=STATEMENU;
-    gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
-    setTimeout(resettomenu, 300);
+    setTimeout(resettomenu, 100);
   }
   else
   {
@@ -1813,8 +1876,7 @@ function endgame(percent)
   if ((percent>=98) || (((gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE)) && (percent>=20)))
   {
     gs.state=STATEMENU;
-    gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
-    setTimeout(resettomenu, 300);
+    setTimeout(resettomenu, 100);
   }
   else
   {
@@ -1826,71 +1888,6 @@ function endgame(percent)
     rainbowwrite(30, 130, "THE RAINBOWS", 25, percent);
 
     rainbowwrite(30, 160, "YOU SCORED "+gs.score.toString(), 25, percent);
-  }
-}
-
-// Main menu
-function menu(percent)
-{
-  // Gamepad support
-  try
-  {
-    if (!!(navigator.getGamepads))
-      gamepadscan();
-  }
-  catch(e){}
-
-  drawmenu(); // TODO remove
-
-  // Draw running unicorn
-  gs.ctx.fillStyle='rgb('+BGCOLOUR.r+','+BGCOLOUR.g+','+BGCOLOUR.b+')';
-  gs.ctx.fillRect(30, 125, SPRITEWIDTH, SPRITEHEIGHT);
-  drawsprite(30, 125, (Math.floor(percent)%6)+1);
-
-  // Draw rainbow
-  drawtile(TILERAINBOW, 260, 130);
-  drawtile(TILERAINBOW2, 260+TILEWIDTH, 130);
-
-  // Check if done or control key/gamepad pressed
-  if (percent>=98)
-  {
-    gs.timeline.end();
-    setTimeout(resettomenu, 3*1000);
-  }
-  else
-  if (((gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE)) && (percent>20))
-  {
-    gs.timeline.end();
-
-    gs.lives=MAXLIVES;
-
-gs.level=0; // TODO remove
-    newlevel(gs.level);
-  }
-  else
-  {
-    var tenth=Math.floor(percent/10);
-
-    switch (tenth)
-    {
-      case 0:
-        gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
-
-        gs.ctx.fillStyle='rgb('+BGCOLOUR.r+','+BGCOLOUR.g+','+BGCOLOUR.b+')';
-        gs.ctx.fillRect(0, 0, gs.canvas.width, gs.canvas.height);
-        break;
-
-      case 1:
-        rainbowwrite(25, 20, "RUSH TO THE RAINBOW", 20, 100);
-        break;
-
-      case 2:
-        rainbowwrite(22, 175, "WASD CURSORS OR GAMEPAD", 15, 100);
-        break;
-
-      default:
-        break;
-    }
   }
 }
 
@@ -1953,7 +1950,6 @@ chipt.start(); // TODO
 
       // Continue with next level, retaining accumulated score
       gs.unlocked=gs.savedata.nextlevel;
-      gs.selected=gs.savedata.nextlevel;
 
       gs.level=gs.savedata.nextlevel;
       gs.score=gs.savedata.score;
@@ -1965,12 +1961,11 @@ chipt.start(); // TODO
         gs.level=0;
         gs.score=0;
       }
+
+      gs.selected=gs.level;
     }
   }
   catch (e) {}
-
-  // Set up menu animation callback
-  gs.timeline.reset().add(10*1000, undefined).addcallback(menu);
 
   // Once tilemap has loaded, create flipped one
   gs.tilemap=new Image;
