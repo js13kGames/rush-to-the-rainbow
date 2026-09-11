@@ -1,10 +1,6 @@
 # Build folder
 tmpbuild
 
-# Built files
-tilemap.js
-levels.js
-
 # Other folders
 closure-compiler
 idea_assets
