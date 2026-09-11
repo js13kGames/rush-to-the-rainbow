@@ -1794,12 +1794,14 @@ function menurafcallback(timestamp)
 
   rainbowwrite(25, 20, "RUSH TO THE RAINBOW", 20, 100);
   rainbowwrite(22, 175, "WASD CURSORS OR GAMEPAD", 15, 100);
+  if ((!gs.music) && ((gs.frame%TARGETFPS)>(TARGETFPS/2)))
+    rainbowwrite(255, 174, "[ENTER]", 15, 100);
 
   // Check for arrow navigation
-  if (ispressed(KEYLEFT))
+  if ((ispressed(KEYLEFT)) && (gs.padstate==KEYNONE))
     gs.selected--;
 
-  if (ispressed(KEYRIGHT))
+  if ((ispressed(KEYRIGHT)) && (gs.padstate==KEYNONE))
     gs.selected++;
 
   if (gs.selected<0) gs.selected=0;
@@ -1811,7 +1813,8 @@ function menurafcallback(timestamp)
   {
     gs.lives=MAXLIVES;
 
-    newlevel(gs.selected); // TODO
+    if ((gs.music) || ((!gs.music) && (gs.padstate==KEYNONE)))
+      newlevel(gs.selected); // TODO
   }
 
   // Reduce held inputs causing issues
@@ -1904,7 +1907,12 @@ function init()
   document.onkeydown=function(e)
   {
     updatekeystate(e, 1);
-chipt.start(); // TODO
+
+    if ((!gs.music) && ((e.code=='Enter') || (e.code=='Space')))
+    {
+      gs.music=true;
+      chipt.start();
+    }
   };
 
   document.onkeyup=function(e)
