@@ -220,3 +220,7 @@ Updated so that if you quit back to the main menu with Escape, it remembers how 
 Put code in so that level select menu does start the one you've got highlighted, but you can't go passed ones you've not completed.
 
 Refactored code to remove need for timeline library, since I'm not really doing animation, it makes sense to keep it as raf callbacks instead. Then the space saved can be put towards the level entropy.
+
+Level select menu is now keyboard only. When music hasn't been started yet, flash instruction to press ENTER at bottom right.
+
+Due to massive space saving by taking out timeline and other golfing, decided to expanded levels until we reach the golden 13k!

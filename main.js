@@ -1829,6 +1829,7 @@ function menurafcallback(timestamp)
 function resettomenu()
 {
   gs.flip=false; // Make sure unicorn always faces towards rainbow
+  gs.xoffset=0; gs.yoffset=0; // Make sure scroll is reset
 
   window.requestAnimationFrame(menurafcallback);
 }
