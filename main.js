@@ -149,9 +149,6 @@ var gs={
   tiles:[], // copy of current level (to allow destruction)
   destroyed:[], // the tiles which are being destroyed
 
-  // Menu button locations
-  buttons:[],
-
   // Characters
   chars:[],
   anim:8, // time until next character animation frame
@@ -1570,7 +1567,7 @@ function inforafcallback(timestamp)
   {
     case STATENEWLEVEL:
       // Write level description
-      rainbowwrite(90, 70, "LEVEL "+(gs.level+1).toString(), 30, 100);
+      rainbowwrite(90, 70, "LEVEL "+(gs.level+1).toString(), 30);
 
       if ((gs.frame==0) || (gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE))
       {
@@ -1585,15 +1582,17 @@ function inforafcallback(timestamp)
       break;
 
     case STATECOMPLETE:
-      rainbowwrite(30, 40, "CONGRATULATIONS", 25, 100);
-      rainbowwrite(30, 70, "YOUR UNICORN GOT", 25, 100);
-      rainbowwrite(30, 100, "ALL THE COINS TO", 25, 100);
-      rainbowwrite(30, 130, "THE RAINBOWS", 25, 100);
+      rainbowwrite(30, 40, "CONGRATULATIONS", 25);
+      rainbowwrite(30, 70, "YOUR UNICORN GOT", 25);
+      rainbowwrite(30, 100, "ALL THE COINS TO", 25);
+      rainbowwrite(30, 130, "THE RAINBOWS", 25);
 
-      rainbowwrite(30, 160, "YOU SCORED "+gs.score.toString(), 25, 100);
+      rainbowwrite(30, 160, "YOU SCORED "+gs.score.toString(), 25);
 
       if ((gs.frame==0) || (gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE))
       {
+        gs.selected=0; // Suggest playing from the start
+
         // End of game - back to the menu
         gs.state=STATEMENU;
         setTimeout(resettomenu, 100);
@@ -1601,17 +1600,15 @@ function inforafcallback(timestamp)
       break;
 
     case STATEFAIL:
-      rainbowwrite(30, 40, "UNLUCKY", 40, 100);
-      rainbowwrite(30, 70, "YOUR UNICORN", 30, 100);
-      rainbowwrite(15, 100, "FAILED TO REACH", 30, 100);
-      rainbowwrite(30, 130, "THE RAINBOW", 30, 100);
+      rainbowwrite(30, 40, "UNLUCKY", 40);
+      rainbowwrite(30, 70, "YOUR UNICORN", 30);
+      rainbowwrite(15, 100, "FAILED TO REACH", 30);
+      rainbowwrite(30, 130, "THE RAINBOW", 30);
 
-      rainbowwrite(30, 160, "YOU SCORED "+gs.score.toString(), 20, 100);
+      rainbowwrite(30, 160, "YOU SCORED "+gs.score.toString(), 20);
 
       if ((gs.frame==0) || (gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE))
       {
-        gs.level=0; // Player failed - back to the start
-
         gs.state=STATEMENU;
         setTimeout(resettomenu, 100);
       }
@@ -1687,6 +1684,9 @@ function rafcallback(timestamp)
     {
       gs.state=STATEFAIL;
 
+      if (gs.level>gs.unlocked)
+        gs.unlocked=gs.level;
+
       // Reduce issues when inputs held
       clearinputstate();
 
@@ -1705,7 +1705,7 @@ function rafcallback(timestamp)
       // Update or Save the game state
       try
       {
-        window.localStorage.setItem(SAVEDATA, JSON.stringify({nextlevel:gs.level+1, score:gs.score}));
+        window.localStorage.setItem(SAVEDATA, JSON.stringify({nextlevel:gs.level+1}));
       }
       catch (e){}
 
@@ -1721,7 +1721,7 @@ function rafcallback(timestamp)
         setTimeout(infogame10, 100);
       }
       else
-        newlevel(gs.level+1); // TODO
+        newlevel(gs.level+1);
     }
 
     // If the update took us out of play state then stop now
@@ -1739,8 +1739,10 @@ function rafcallback(timestamp)
     gs.quit=false;
 
     // Update vars for level select menu
+    if (gs.level>gs.unlocked)
+      gs.unlocked=gs.level;
+
     gs.selected=gs.level;
-    gs.unlocked=gs.level;
 
     // Switch to menu
     gs.state=STATEMENU;
@@ -1753,13 +1755,13 @@ function rafcallback(timestamp)
 }
 
 // Write text using the rainbow gradient
-function rainbowwrite(x, y, text, fontsize, percent)
+function rainbowwrite(x, y, text, fontsize)
 {
   gs.ctx.font='bold '+fontsize+'px sans-serif';
   gs.ctx.lineJoin='round'; // Smooth corners
 
   gs.ctx.fillStyle=gs.rainbowgradient;
-  gs.ctx.fillText(text, x, y+(Math.sin(percent)*3));
+  gs.ctx.fillText(text, x, y);
 }
 
 // Called every frame whilst in the menu
@@ -1792,10 +1794,10 @@ function menurafcallback(timestamp)
   drawsprite(30, 125, (Math.floor(gs.frame/3)%6)+1);
   gs.frame++;
 
-  rainbowwrite(25, 20, "RUSH TO THE RAINBOW", 20, 100);
-  rainbowwrite(22, 175, "WASD CURSORS OR GAMEPAD", 15, 100);
+  rainbowwrite(25, 20, "RUSH TO THE RAINBOW", 20);
+  rainbowwrite(22, 175, "WASD CURSORS OR GAMEPAD", 15);
   if ((!gs.music) && ((gs.frame%TARGETFPS)>(TARGETFPS/2)))
-    rainbowwrite(255, 174, "[ENTER]", 15, 100);
+    rainbowwrite(255, 174, "[ENTER]", 15);
 
   // Check for arrow navigation
   if ((ispressed(KEYLEFT)) && (gs.padstate==KEYNONE))
@@ -1812,9 +1814,10 @@ function menurafcallback(timestamp)
   if (ispressed(KEYACTION))
   {
     gs.lives=MAXLIVES;
+    gs.score=0;
 
     if ((gs.music) || ((!gs.music) && (gs.padstate==KEYNONE)))
-      newlevel(gs.selected); // TODO
+      newlevel(gs.selected);
   }
 
   // Reduce held inputs causing issues
@@ -1861,9 +1864,6 @@ function drawmenu()
     gs.ctx.beginPath();
     gs.ctx.roundRect(lx, ly, lw, lh, [lw/4, lh/4]);
     gs.ctx.stroke();
-
-    // Add a note of where the button is
-    gs.buttons[level]={x:lx, y:ly, w:lw, h:lh};
 
     // Add title
     gs.ctx.font='bold 18px sans-serif';
@@ -1952,9 +1952,6 @@ function init()
 
   playfieldsize();
 
-  // Init level vars which are stored between plays
-  gs.score=0;
-
   // Restore from localStorage
   try
   {
@@ -1963,19 +1960,15 @@ function init()
     {
       gs.savedata=JSON.parse(savedata);
 
-      // Continue with next level, retaining accumulated score
+      // Continue with next level
       gs.unlocked=gs.savedata.nextlevel;
 
       gs.level=gs.savedata.nextlevel;
-      gs.score=gs.savedata.score;
 
       // If the whole game has been completed go back to the start
       //   otherwise it'll keep defaulting to playing the last level
       if ((gs.level)>=levels.length)
-      {
         gs.level=0;
-        gs.score=0;
-      }
 
       gs.selected=gs.level;
     }
